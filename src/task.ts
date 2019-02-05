@@ -10,7 +10,7 @@ export interface ITaskClass {
 export abstract class Task {
   static workerConfig: ISqsWorkerConfig;
 
-  public abstract serialize(): any;
+  public abstract serialize(): string;
 
   public abstract doTaskWork(): Promise<any>;
 

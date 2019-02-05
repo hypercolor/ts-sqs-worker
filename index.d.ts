@@ -25,7 +25,7 @@ export interface ITaskClass {
 }
 export abstract class Task {
     static workerConfig: ISqsWorkerConfig;
-    abstract serialize(): any;
+    abstract serialize(): string;
     abstract doTaskWork(): Promise<any>;
     submit(): Promise<import("aws-sdk/lib/request").PromiseResult<SQS.SendMessageResult, import("aws-sdk").AWSError>>;
 }
