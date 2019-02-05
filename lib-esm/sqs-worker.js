@@ -5,7 +5,7 @@ export class SqsWorker {
         this.config = config;
         this.consumer = Consumer.create({
             queueUrl: config.sqsUrl,
-            handleMessage: this.buildMessageHandler(successCallback, failCallback)
+            handleMessage: this.buildMessageHandler(successCallback, failCallback),
         });
         this.consumer.on('error', SqsWorker.errorHandler);
         this.consumer.on('processing_error', SqsWorker.processingErrorHandler);

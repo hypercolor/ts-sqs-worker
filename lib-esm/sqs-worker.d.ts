@@ -1,4 +1,4 @@
-import { ITaskClass, Task } from "./task";
+import { ITaskClass, Task } from './task';
 export interface ISqsWorkerConfig {
     sqsUrl: string;
 }

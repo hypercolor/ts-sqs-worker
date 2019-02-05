@@ -2,7 +2,7 @@
 // Dependencies for this module:
 //   ../aws-sdk/clients/sqs
 
-import * as SQS from "aws-sdk/clients/sqs";
+import * as SQS from 'aws-sdk/clients/sqs';
 
 export interface ISqsWorkerConfig {
     sqsUrl: string;
@@ -17,7 +17,6 @@ export class SqsWorker {
 
 export interface ITaskClass {
     name: string;
-    maxConcurrent: number;
     workerConfig: ISqsWorkerConfig;
     deserialize(serializedParams: any): Promise<Task>;
 }

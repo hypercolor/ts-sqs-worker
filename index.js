@@ -13333,7 +13333,7 @@ var SqsWorker = /** @class */ (function () {
         this.config = config;
         this.consumer = sqs_consumer__WEBPACK_IMPORTED_MODULE_0__["create"]({
             queueUrl: config.sqsUrl,
-            handleMessage: this.buildMessageHandler(successCallback, failCallback)
+            handleMessage: this.buildMessageHandler(successCallback, failCallback),
         });
         this.consumer.on('error', SqsWorker.errorHandler);
         this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
@@ -13432,7 +13432,7 @@ var TaskRouter = /** @class */ (function () {
                 }
             }
         }
-        return Promise.reject(new Error('Couldn\'t match task type: ' + JSON.stringify(message.MessageAttributes)));
+        return Promise.reject(new Error("Couldn't match task type: " + JSON.stringify(message.MessageAttributes)));
     };
     TaskRouter.taskTypes = [];
     return TaskRouter;
@@ -13464,17 +13464,19 @@ var Task = /** @class */ (function () {
             return Promise.reject(new Error('Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'));
         }
         else {
-            return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_0__().sendMessage({
+            return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_0__()
+                .sendMessage({
                 DelaySeconds: 0,
                 MessageAttributes: {
-                    "type": {
-                        DataType: "String",
-                        StringValue: this.constructor.name
-                    }
+                    type: {
+                        DataType: 'String',
+                        StringValue: this.constructor.name,
+                    },
                 },
                 MessageBody: this.serialize(),
-                QueueUrl: config.sqsUrl
-            }).promise();
+                QueueUrl: config.sqsUrl,
+            })
+                .promise();
         }
     };
     return Task;

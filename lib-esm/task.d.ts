@@ -1,8 +1,7 @@
-import * as SQS from "aws-sdk/clients/sqs";
+import * as SQS from 'aws-sdk/clients/sqs';
 import { ISqsWorkerConfig } from './sqs-worker';
 export interface ITaskClass {
     name: string;
-    maxConcurrent: number;
     workerConfig: ISqsWorkerConfig;
     deserialize(serializedParams: any): Promise<Task>;
 }
