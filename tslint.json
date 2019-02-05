@@ -62,6 +62,7 @@
     "match-default-export-name": true,
     "prefer-const": true,
     "prefer-method-signature": true,
+    "semicolon": true,
     "ban-types": [
       true,
       [
