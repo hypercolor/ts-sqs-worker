@@ -1,27 +1,27 @@
-import * as SQS from 'aws-sdk/clients/sqs'
-import { ISqsWorkerConfig } from './sqs-worker'
+import * as SQS from 'aws-sdk/clients/sqs';
+import { ISqsWorkerConfig } from './sqs-worker';
 
 export interface ITaskClass {
-  name: string
-  workerConfig: ISqsWorkerConfig
-  deserialize(serializedParams: any): Promise<Task>
+  name: string;
+  workerConfig: ISqsWorkerConfig;
+  deserialize(serializedParams: any): Promise<Task>;
 }
 
 export abstract class Task {
-  static workerConfig: ISqsWorkerConfig
+  static workerConfig: ISqsWorkerConfig;
 
-  public abstract serialize(): any
+  public abstract serialize(): any;
 
-  public abstract doTaskWork(): Promise<any>
+  public abstract doTaskWork(): Promise<any>;
 
   public submit() {
-    const config = (this.constructor as any).workerConfig
+    const config = (this.constructor as any).workerConfig;
     if (!config) {
       return Promise.reject(
         new Error(
           'Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'
         )
-      )
+      );
     } else {
       return new SQS()
         .sendMessage({
@@ -35,7 +35,7 @@ export abstract class Task {
           MessageBody: this.serialize(),
           QueueUrl: config.sqsUrl,
         })
-        .promise()
+        .promise();
     }
   }
 }

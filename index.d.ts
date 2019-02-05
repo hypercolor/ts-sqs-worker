@@ -6,6 +6,9 @@ import * as SQS from 'aws-sdk/clients/sqs';
 
 export interface ISqsWorkerConfig {
     sqsUrl: string;
+    accessKeyId: string;
+    secretAccessKey: string;
+    region: string;
 }
 export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: any) => void;
 export type SqsWorkerFailedTaskCallback = (task: Task, error: any) => void;

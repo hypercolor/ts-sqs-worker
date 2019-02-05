@@ -13288,9 +13288,13 @@ var SqsWorkerSubmitter = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SqsWorker", function() { return SqsWorker; });
-/* harmony import */ var sqs_consumer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sqs-consumer */ "sqs-consumer");
-/* harmony import */ var sqs_consumer__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sqs_consumer__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _task_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./task-router */ "./src/task-router.ts");
+/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! aws-sdk */ "aws-sdk");
+/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! aws-sdk/clients/sqs */ "./node_modules/aws-sdk/clients/sqs.js");
+/* harmony import */ var aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var sqs_consumer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sqs-consumer */ "sqs-consumer");
+/* harmony import */ var sqs_consumer__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sqs_consumer__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _task_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./task-router */ "./src/task-router.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -13328,12 +13332,18 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 };
 
 
+
+
 var SqsWorker = /** @class */ (function () {
     function SqsWorker(config, successCallback, failCallback) {
         this.config = config;
-        this.consumer = sqs_consumer__WEBPACK_IMPORTED_MODULE_0__["create"]({
+        this.consumer = sqs_consumer__WEBPACK_IMPORTED_MODULE_2__["create"]({
             queueUrl: config.sqsUrl,
             handleMessage: this.buildMessageHandler(successCallback, failCallback),
+            sqs: new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__({
+                credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),
+                region: config.region,
+            }),
         });
         this.consumer.on('error', SqsWorker.errorHandler);
         this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
@@ -13341,7 +13351,7 @@ var SqsWorker = /** @class */ (function () {
     SqsWorker.prototype.registerTasksForProcessing = function (taskTypes) {
         var _this = this;
         taskTypes.forEach(function (taskType) {
-            _task_router__WEBPACK_IMPORTED_MODULE_1__["TaskRouter"].registerTask(taskType);
+            _task_router__WEBPACK_IMPORTED_MODULE_3__["TaskRouter"].registerTask(taskType);
             taskType.workerConfig = _this.config;
         });
     };
@@ -13351,7 +13361,7 @@ var SqsWorker = /** @class */ (function () {
             var start, task;
             return __generator(this, function (_a) {
                 start = new Date().getTime();
-                _task_router__WEBPACK_IMPORTED_MODULE_1__["TaskRouter"].deserializeTask(message)
+                _task_router__WEBPACK_IMPORTED_MODULE_3__["TaskRouter"].deserializeTask(message)
                     .then(function (t) {
                     task = t;
                     return task.doTaskWork();
@@ -13495,6 +13505,17 @@ var Task = /** @class */ (function () {
 
 module.exports = __webpack_require__(/*! ./index.ts */"./index.ts");
 
+
+/***/ }),
+
+/***/ "aws-sdk":
+/*!**************************!*\
+  !*** external "aws-sdk" ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
 
 /***/ }),
 
