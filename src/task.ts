@@ -10,7 +10,7 @@ export interface ITaskClass {
 export abstract class Task {
   static workerConfig: ISqsWorkerConfig;
 
-  public abstract serialize(): string;
+  public abstract serialize(): { [key: string]: any };
 
   public abstract doTaskWork(): Promise<any>;
 
@@ -32,7 +32,7 @@ export abstract class Task {
               StringValue: this.constructor.name,
             },
           },
-          MessageBody: this.serialize(),
+          MessageBody: JSON.stringify(this.serialize()),
           QueueUrl: config.sqsUrl,
         })
         .promise();
