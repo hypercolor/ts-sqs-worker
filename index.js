@@ -13344,16 +13344,20 @@ var SqsWorker = /** @class */ (function () {
                 credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),
                 region: config.region,
             }),
+            messageAttributeNames: [
+                'type'
+            ]
         });
         this.consumer.on('error', SqsWorker.errorHandler);
         this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
     }
-    SqsWorker.prototype.registerTasksForProcessing = function (taskTypes) {
+    SqsWorker.prototype.registerTasksForProcessingAndStartConsuming = function (taskTypes) {
         var _this = this;
         taskTypes.forEach(function (taskType) {
             _task_router__WEBPACK_IMPORTED_MODULE_3__["TaskRouter"].registerTask(taskType);
             taskType.workerConfig = _this.config;
         });
+        this.consumer.start();
     };
     SqsWorker.prototype.buildMessageHandler = function (successCallback, failCallback) {
         var _this = this;
@@ -13369,9 +13373,14 @@ var SqsWorker = /** @class */ (function () {
                     .then(function (result) {
                     if (result && result.error) {
                         console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
+                        var type = 'unknown';
+                        if (message.MessageAttributes && message.MessageAttributes.type) {
+                            type = message.MessageAttributes.type.StringValue;
+                        }
+                        if (failCallback) {
+                            failCallback(type, result.error);
+                        }
                         return Promise.reject(result.error);
-                        // job.remove()
-                        // done(result.error)
                     }
                     else {
                         var msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
@@ -13379,7 +13388,6 @@ var SqsWorker = /** @class */ (function () {
                             msg += ': ' + result.message;
                         }
                         console.log(msg);
-                        // job.remove()
                         if (successCallback) {
                             successCallback(task, result);
                         }
@@ -13388,12 +13396,14 @@ var SqsWorker = /** @class */ (function () {
                 })
                     .catch(function (err) {
                     console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
-                    // job.remove()
+                    var type = 'unknown';
+                    if (message.MessageAttributes && message.MessageAttributes.type) {
+                        type = message.MessageAttributes.type.StringValue;
+                    }
                     if (failCallback) {
-                        failCallback(task, err);
+                        failCallback(type, err);
                     }
                     return Promise.reject(err);
-                    // done(err)
                 });
                 return [2 /*return*/];
             });

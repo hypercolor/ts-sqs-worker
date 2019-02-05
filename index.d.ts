@@ -11,11 +11,11 @@ export interface ISqsWorkerConfig {
     region: string;
 }
 export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: any) => void;
-export type SqsWorkerFailedTaskCallback = (task: Task, error: any) => void;
+export type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
 export class SqsWorker {
     config: ISqsWorkerConfig;
     constructor(config: ISqsWorkerConfig, successCallback?: SqsWorkerSuccessfulTaskCallback, failCallback?: SqsWorkerFailedTaskCallback);
-    registerTasksForProcessing(taskTypes: Array<ITaskClass>): void;
+    registerTasksForProcessingAndStartConsuming(taskTypes: Array<ITaskClass>): void;
 }
 
 export interface ITaskClass {

@@ -1,4 +1,4 @@
-import { Credentials } from "aws-sdk";
+import { Credentials } from 'aws-sdk';
 import * as SQS from 'aws-sdk/clients/sqs';
 export class Task {
     submit() {

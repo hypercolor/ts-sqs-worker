@@ -12,15 +12,19 @@ export class SqsWorker {
                 credentials: new Credentials(config.accessKeyId, config.secretAccessKey),
                 region: config.region,
             }),
+            messageAttributeNames: [
+                'type'
+            ]
         });
         this.consumer.on('error', SqsWorker.errorHandler);
         this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
     }
-    registerTasksForProcessing(taskTypes) {
+    registerTasksForProcessingAndStartConsuming(taskTypes) {
         taskTypes.forEach(taskType => {
             TaskRouter.registerTask(taskType);
             taskType.workerConfig = this.config;
         });
+        this.consumer.start();
     }
     buildMessageHandler(successCallback, failCallback) {
         return async (message) => {
@@ -35,9 +39,14 @@ export class SqsWorker {
                 .then(result => {
                 if (result && result.error) {
                     console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
+                    let type = 'unknown';
+                    if (message.MessageAttributes && message.MessageAttributes.type) {
+                        type = message.MessageAttributes.type.StringValue;
+                    }
+                    if (failCallback) {
+                        failCallback(type, result.error);
+                    }
                     return Promise.reject(result.error);
-                    // job.remove()
-                    // done(result.error)
                 }
                 else {
                     let msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
@@ -45,7 +54,6 @@ export class SqsWorker {
                         msg += ': ' + result.message;
                     }
                     console.log(msg);
-                    // job.remove()
                     if (successCallback) {
                         successCallback(task, result);
                     }
@@ -54,12 +62,14 @@ export class SqsWorker {
             })
                 .catch(err => {
                 console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
-                // job.remove()
+                let type = 'unknown';
+                if (message.MessageAttributes && message.MessageAttributes.type) {
+                    type = message.MessageAttributes.type.StringValue;
+                }
                 if (failCallback) {
-                    failCallback(task, err);
+                    failCallback(type, err);
                 }
                 return Promise.reject(err);
-                // done(err)
             });
         };
     }
