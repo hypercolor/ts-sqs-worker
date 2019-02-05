@@ -13483,7 +13483,7 @@ var Task = /** @class */ (function () {
                         StringValue: this.constructor.name,
                     },
                 },
-                MessageBody: this.serialize(),
+                MessageBody: JSON.stringify(this.serialize()),
                 QueueUrl: config.sqsUrl,
             })
                 .promise();

@@ -15,7 +15,7 @@ export class Task {
                         StringValue: this.constructor.name,
                     },
                 },
-                MessageBody: this.serialize(),
+                MessageBody: JSON.stringify(this.serialize()),
                 QueueUrl: config.sqsUrl,
             })
                 .promise();
