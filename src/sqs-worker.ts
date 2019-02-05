@@ -100,7 +100,7 @@ export class SqsWorker {
           if (failCallback) {
             failCallback(type, err);
           }
-          return Promise.reject(err);
+          return Promise.resolve();
         });
     };
   }

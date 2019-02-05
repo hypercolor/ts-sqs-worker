@@ -12,9 +12,7 @@ export class SqsWorker {
                 credentials: new Credentials(config.accessKeyId, config.secretAccessKey),
                 region: config.region,
             }),
-            messageAttributeNames: [
-                'type'
-            ]
+            messageAttributeNames: ['type'],
         });
         this.consumer.on('error', SqsWorker.errorHandler);
         this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
@@ -69,7 +67,7 @@ export class SqsWorker {
                 if (failCallback) {
                     failCallback(type, err);
                 }
-                return Promise.reject(err);
+                return Promise.resolve();
             });
         };
     }

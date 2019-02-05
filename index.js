@@ -13344,9 +13344,7 @@ var SqsWorker = /** @class */ (function () {
                 credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),
                 region: config.region,
             }),
-            messageAttributeNames: [
-                'type'
-            ]
+            messageAttributeNames: ['type'],
         });
         this.consumer.on('error', SqsWorker.errorHandler);
         this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
@@ -13403,7 +13401,7 @@ var SqsWorker = /** @class */ (function () {
                     if (failCallback) {
                         failCallback(type, err);
                     }
-                    return Promise.reject(err);
+                    return Promise.resolve();
                 });
                 return [2 /*return*/];
             });
@@ -13443,16 +13441,23 @@ var TaskRouter = /** @class */ (function () {
         this.taskTypes.push(taskType);
     };
     TaskRouter.deserializeTask = function (message) {
+        var params;
+        try {
+            params = JSON.parse(message.Body);
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
         if (message.MessageAttributes && message.MessageAttributes.type) {
             var type = message.MessageAttributes.type.StringValue;
             for (var _i = 0, _a = this.taskTypes; _i < _a.length; _i++) {
                 var taskType = _a[_i];
                 if (type === taskType.name) {
-                    return taskType.deserialize(message.Body);
+                    return taskType.deserialize(params);
                 }
             }
         }
-        return Promise.reject(new Error("Couldn't match task type: " + JSON.stringify(message.MessageAttributes)));
+        return Promise.reject(new Error('Couldn\'t match task type: ' + JSON.stringify(message.MessageAttributes)));
     };
     TaskRouter.taskTypes = [];
     return TaskRouter;

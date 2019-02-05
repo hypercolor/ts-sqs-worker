@@ -9,11 +9,18 @@ export class TaskRouter {
   }
 
   public static deserializeTask(message: SQS.Message): Promise<Task> {
+    let params: any;
+    try {
+      params = JSON.parse(message.Body as string);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
     if (message.MessageAttributes && message.MessageAttributes.type) {
       const type = message.MessageAttributes.type.StringValue;
       for (const taskType of this.taskTypes) {
         if (type === taskType.name) {
-          return taskType.deserialize(message.Body);
+          return taskType.deserialize(params);
         }
       }
     }
