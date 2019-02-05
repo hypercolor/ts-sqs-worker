@@ -13462,8 +13462,11 @@ var TaskRouter = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Task", function() { return Task; });
-/* harmony import */ var aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! aws-sdk/clients/sqs */ "./node_modules/aws-sdk/clients/sqs.js");
-/* harmony import */ var aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! aws-sdk */ "aws-sdk");
+/* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! aws-sdk/clients/sqs */ "./node_modules/aws-sdk/clients/sqs.js");
+/* harmony import */ var aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__);
+
 
 var Task = /** @class */ (function () {
     function Task() {
@@ -13474,7 +13477,10 @@ var Task = /** @class */ (function () {
             return Promise.reject(new Error('Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'));
         }
         else {
-            return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_0__()
+            return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__({
+                credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),
+                region: config.region,
+            })
                 .sendMessage({
                 DelaySeconds: 0,
                 MessageAttributes: {

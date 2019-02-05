@@ -1,3 +1,4 @@
+import { Credentials } from 'aws-sdk';
 import * as SQS from 'aws-sdk/clients/sqs';
 import { ISqsWorkerConfig } from './sqs-worker';
 
@@ -23,7 +24,10 @@ export abstract class Task {
         )
       );
     } else {
-      return new SQS()
+      return new SQS({
+        credentials: new Credentials(config.accessKeyId, config.secretAccessKey),
+        region: config.region,
+      })
         .sendMessage({
           DelaySeconds: 0,
           MessageAttributes: {

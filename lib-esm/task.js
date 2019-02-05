@@ -1,3 +1,4 @@
+import { Credentials } from "aws-sdk";
 import * as SQS from 'aws-sdk/clients/sqs';
 export class Task {
     submit() {
@@ -6,7 +7,10 @@ export class Task {
             return Promise.reject(new Error('Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'));
         }
         else {
-            return new SQS()
+            return new SQS({
+                credentials: new Credentials(config.accessKeyId, config.secretAccessKey),
+                region: config.region,
+            })
                 .sendMessage({
                 DelaySeconds: 0,
                 MessageAttributes: {
