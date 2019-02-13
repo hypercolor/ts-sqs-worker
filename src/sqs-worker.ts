@@ -9,6 +9,7 @@ export interface ISqsWorkerConfig {
   accessKeyId: string;
   secretAccessKey: string;
   region: string;
+  verbose?: boolean;
 }
 
 export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: any) => void;
@@ -32,8 +33,8 @@ export class SqsWorker {
       messageAttributeNames: ['type'],
     });
 
-    this.consumer.on('error', SqsWorker.errorHandler);
-    this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
+    this.consumer.on('error', this.errorHandler);
+    this.consumer.on('processing_error', this.processingErrorHandler);
   }
 
   public registerTasksForProcessingAndStartConsuming(taskTypes: Array<ITaskClass>) {
@@ -64,9 +65,11 @@ export class SqsWorker {
         })
         .then(result => {
           if (result && result.error) {
-            console.log(
-              'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error)
-            );
+            if (this.config.verbose) {
+              console.log(
+                'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error)
+              );
+            }
 
             let type = 'unknown';
             if (message.MessageAttributes && message.MessageAttributes.type) {
@@ -78,12 +81,14 @@ export class SqsWorker {
 
             return Promise.reject(result.error);
           } else {
-            let msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
+            if (this.config.verbose) {
+              let msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
 
-            if (result && result.message) {
-              msg += ': ' + result.message;
+              if (result && result.message) {
+                msg += ': ' + result.message;
+              }
+              console.log(msg);
             }
-            console.log(msg);
 
             if (successCallback) {
               successCallback(task, result);
@@ -92,7 +97,9 @@ export class SqsWorker {
           }
         })
         .catch(err => {
-          console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
+          if (this.config.verbose) {
+            console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
+          }
           let type = 'unknown';
           if (message.MessageAttributes && message.MessageAttributes.type) {
             type = message.MessageAttributes.type.StringValue as string;
@@ -105,15 +112,19 @@ export class SqsWorker {
     };
   }
 
-  private static errorHandler(err: any) {
-    console.error('ts-sqs-worker: There was an error in the sqs task');
-    console.error(err);
-    console.error(err.stack);
+  private errorHandler(err: any) {
+    if (this.config.verbose) {
+      console.error('ts-sqs-worker: There was an error in the sqs task');
+      console.error(err);
+      console.error(err.stack);
+    }
   }
 
-  private static processingErrorHandler(err: any) {
-    console.error('ts-sqs-worker: There was a processing_error in the sqs task');
-    console.error(err);
-    console.error(err.stack);
+  private processingErrorHandler(err: any) {
+    if (this.config.verbose) {
+      console.error('ts-sqs-worker: There was a processing_error in the sqs task');
+      console.error(err);
+      console.error(err.stack);
+    }
   }
 }

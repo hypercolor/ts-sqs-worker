@@ -18,7 +18,7 @@ export class TaskRouter {
                 }
             }
         }
-        return Promise.reject(new Error('Couldn\'t match task type: ' + JSON.stringify(message.MessageAttributes)));
+        return Promise.reject(new Error("Couldn't match task type: " + JSON.stringify(message.MessageAttributes)));
     }
 }
 TaskRouter.taskTypes = [];

@@ -4,6 +4,7 @@ export interface ISqsWorkerConfig {
     accessKeyId: string;
     secretAccessKey: string;
     region: string;
+    verbose?: boolean;
 }
 export declare type SqsWorkerSuccessfulTaskCallback = (task: Task, result: any) => void;
 export declare type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
@@ -13,6 +14,6 @@ export declare class SqsWorker {
     constructor(config: ISqsWorkerConfig, successCallback?: SqsWorkerSuccessfulTaskCallback, failCallback?: SqsWorkerFailedTaskCallback);
     registerTasksForProcessingAndStartConsuming(taskTypes: Array<ITaskClass>): void;
     private buildMessageHandler;
-    private static errorHandler;
-    private static processingErrorHandler;
+    private errorHandler;
+    private processingErrorHandler;
 }

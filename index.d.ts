@@ -9,6 +9,7 @@ export interface ISqsWorkerConfig {
     accessKeyId: string;
     secretAccessKey: string;
     region: string;
+    verbose?: boolean;
 }
 export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: any) => void;
 export type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;

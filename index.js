@@ -13346,8 +13346,8 @@ var SqsWorker = /** @class */ (function () {
             }),
             messageAttributeNames: ['type'],
         });
-        this.consumer.on('error', SqsWorker.errorHandler);
-        this.consumer.on('processing_error', SqsWorker.processingErrorHandler);
+        this.consumer.on('error', this.errorHandler);
+        this.consumer.on('processing_error', this.processingErrorHandler);
     }
     SqsWorker.prototype.registerTasksForProcessingAndStartConsuming = function (taskTypes) {
         var _this = this;
@@ -13361,6 +13361,7 @@ var SqsWorker = /** @class */ (function () {
         var _this = this;
         return function (message) { return __awaiter(_this, void 0, void 0, function () {
             var start, task;
+            var _this = this;
             return __generator(this, function (_a) {
                 start = new Date().getTime();
                 _task_router__WEBPACK_IMPORTED_MODULE_3__["TaskRouter"].deserializeTask(message)
@@ -13370,7 +13371,9 @@ var SqsWorker = /** @class */ (function () {
                 })
                     .then(function (result) {
                     if (result && result.error) {
-                        console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
+                        if (_this.config.verbose) {
+                            console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
+                        }
                         var type = 'unknown';
                         if (message.MessageAttributes && message.MessageAttributes.type) {
                             type = message.MessageAttributes.type.StringValue;
@@ -13381,11 +13384,13 @@ var SqsWorker = /** @class */ (function () {
                         return Promise.reject(result.error);
                     }
                     else {
-                        var msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
-                        if (result && result.message) {
-                            msg += ': ' + result.message;
+                        if (_this.config.verbose) {
+                            var msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
+                            if (result && result.message) {
+                                msg += ': ' + result.message;
+                            }
+                            console.log(msg);
                         }
-                        console.log(msg);
                         if (successCallback) {
                             successCallback(task, result);
                         }
@@ -13393,7 +13398,9 @@ var SqsWorker = /** @class */ (function () {
                     }
                 })
                     .catch(function (err) {
-                    console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
+                    if (_this.config.verbose) {
+                        console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
+                    }
                     var type = 'unknown';
                     if (message.MessageAttributes && message.MessageAttributes.type) {
                         type = message.MessageAttributes.type.StringValue;
@@ -13407,15 +13414,19 @@ var SqsWorker = /** @class */ (function () {
             });
         }); };
     };
-    SqsWorker.errorHandler = function (err) {
-        console.error('ts-sqs-worker: There was an error in the sqs task');
-        console.error(err);
-        console.error(err.stack);
+    SqsWorker.prototype.errorHandler = function (err) {
+        if (this.config.verbose) {
+            console.error('ts-sqs-worker: There was an error in the sqs task');
+            console.error(err);
+            console.error(err.stack);
+        }
     };
-    SqsWorker.processingErrorHandler = function (err) {
-        console.error('ts-sqs-worker: There was a processing_error in the sqs task');
-        console.error(err);
-        console.error(err.stack);
+    SqsWorker.prototype.processingErrorHandler = function (err) {
+        if (this.config.verbose) {
+            console.error('ts-sqs-worker: There was a processing_error in the sqs task');
+            console.error(err);
+            console.error(err.stack);
+        }
     };
     return SqsWorker;
 }());
@@ -13457,7 +13468,7 @@ var TaskRouter = /** @class */ (function () {
                 }
             }
         }
-        return Promise.reject(new Error('Couldn\'t match task type: ' + JSON.stringify(message.MessageAttributes)));
+        return Promise.reject(new Error("Couldn't match task type: " + JSON.stringify(message.MessageAttributes)));
     };
     TaskRouter.taskTypes = [];
     return TaskRouter;
