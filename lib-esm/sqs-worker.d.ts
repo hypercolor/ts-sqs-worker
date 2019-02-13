@@ -6,7 +6,11 @@ export interface ISqsWorkerConfig {
     region: string;
     verbose?: boolean;
 }
-export declare type SqsWorkerSuccessfulTaskCallback = (task: Task, result: any) => void;
+export interface ISqsWorkerTaskResult {
+    durationMs: number;
+    taskResult: any;
+}
+export declare type SqsWorkerSuccessfulTaskCallback = (task: Task, result: ISqsWorkerTaskResult) => void;
 export declare type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
 export declare class SqsWorker {
     config: ISqsWorkerConfig;

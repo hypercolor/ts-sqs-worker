@@ -12,7 +12,12 @@ export interface ISqsWorkerConfig {
   verbose?: boolean;
 }
 
-export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: any) => void;
+export interface ISqsWorkerTaskResult {
+  durationMs: number;
+  taskResult: any;
+}
+
+export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: ISqsWorkerTaskResult) => void;
 export type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
 
 export class SqsWorker {
@@ -91,7 +96,10 @@ export class SqsWorker {
             }
 
             if (successCallback) {
-              successCallback(task, result);
+              successCallback(task, {
+                durationMs: new Date().getTime() - start,
+                taskResult: result,
+              });
             }
             return Promise.resolve();
           }

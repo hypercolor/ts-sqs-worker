@@ -57,7 +57,10 @@ export class SqsWorker {
                         console.log(msg);
                     }
                     if (successCallback) {
-                        successCallback(task, result);
+                        successCallback(task, {
+                            durationMs: new Date().getTime() - start,
+                            taskResult: result
+                        });
                     }
                     return Promise.resolve();
                 }
