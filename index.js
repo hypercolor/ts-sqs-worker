@@ -13337,6 +13337,9 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 var SqsWorker = /** @class */ (function () {
     function SqsWorker(config, successCallback, failCallback) {
         this.config = config;
+        if (!config || !config.sqsUrl || !config.accessKeyId || !config.secretAccessKey || !config.region) {
+            throw new Error('Invalid SQS worker config: ' + JSON.stringify(config));
+        }
         this.consumer = sqs_consumer__WEBPACK_IMPORTED_MODULE_2__["create"]({
             queueUrl: config.sqsUrl,
             handleMessage: this.buildMessageHandler(successCallback, failCallback),
@@ -13394,7 +13397,7 @@ var SqsWorker = /** @class */ (function () {
                         if (successCallback) {
                             successCallback(task, {
                                 durationMs: new Date().getTime() - start,
-                                taskResult: result
+                                taskResult: result,
                             });
                         }
                         return Promise.resolve();
@@ -13418,14 +13421,14 @@ var SqsWorker = /** @class */ (function () {
         }); };
     };
     SqsWorker.prototype.errorHandler = function (err) {
-        if (this.config.verbose) {
+        if (!this.config || this.config.verbose) {
             console.error('ts-sqs-worker: There was an error in the sqs task');
             console.error(err);
             console.error(err.stack);
         }
     };
     SqsWorker.prototype.processingErrorHandler = function (err) {
-        if (this.config.verbose) {
+        if (!this.config || this.config.verbose) {
             console.error('ts-sqs-worker: There was a processing_error in the sqs task');
             console.error(err);
             console.error(err.stack);

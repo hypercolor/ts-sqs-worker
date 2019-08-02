@@ -28,6 +28,9 @@ export class SqsWorker {
     successCallback?: SqsWorkerSuccessfulTaskCallback,
     failCallback?: SqsWorkerFailedTaskCallback
   ) {
+    if (!config || !config.sqsUrl || !config.accessKeyId || !config.secretAccessKey || !config.region) {
+      throw new Error('Invalid SQS worker config: ' + JSON.stringify(config));
+    }
     this.consumer = Consumer.create({
       queueUrl: config.sqsUrl,
       handleMessage: this.buildMessageHandler(successCallback, failCallback),
@@ -121,7 +124,7 @@ export class SqsWorker {
   }
 
   private errorHandler(err: any) {
-    if (this.config.verbose) {
+    if (!this.config || this.config.verbose) {
       console.error('ts-sqs-worker: There was an error in the sqs task');
       console.error(err);
       console.error(err.stack);
@@ -129,7 +132,7 @@ export class SqsWorker {
   }
 
   private processingErrorHandler(err: any) {
-    if (this.config.verbose) {
+    if (!this.config || this.config.verbose) {
       console.error('ts-sqs-worker: There was a processing_error in the sqs task');
       console.error(err);
       console.error(err.stack);
