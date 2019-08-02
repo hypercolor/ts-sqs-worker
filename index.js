@@ -13510,6 +13510,9 @@ var Task = /** @class */ (function () {
             return Promise.reject(new Error('Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'));
         }
         else {
+            if (config.verbose) {
+                console.log('Submitting task: ' + config.sqsUrl + ' region: ' + config.region + ', creds: ' + config.accessKeyId + ' / ...' + config.secretAccessKey.substring(config.secretAccessKey.length - 6));
+            }
             return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__({
                 credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),
                 region: config.region,
