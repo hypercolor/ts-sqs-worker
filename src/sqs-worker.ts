@@ -41,8 +41,8 @@ export class SqsWorker {
       messageAttributeNames: ['type'],
     });
 
-    this.consumer.on('error', this.errorHandler);
-    this.consumer.on('processing_error', this.processingErrorHandler);
+    this.consumer.on('error', err => this.errorHandler(err));
+    this.consumer.on('processing_error', err => this.processingErrorHandler(err));
   }
 
   public registerTasksForProcessingAndStartConsuming(taskTypes: Array<ITaskClass>) {

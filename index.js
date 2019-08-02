@@ -13336,6 +13336,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 var SqsWorker = /** @class */ (function () {
     function SqsWorker(config, successCallback, failCallback) {
+        var _this = this;
         this.config = config;
         if (!config || !config.sqsUrl || !config.accessKeyId || !config.secretAccessKey || !config.region) {
             throw new Error('Invalid SQS worker config: ' + JSON.stringify(config));
@@ -13349,8 +13350,8 @@ var SqsWorker = /** @class */ (function () {
             }),
             messageAttributeNames: ['type'],
         });
-        this.consumer.on('error', this.errorHandler);
-        this.consumer.on('processing_error', this.processingErrorHandler);
+        this.consumer.on('error', function (err) { return _this.errorHandler(err); });
+        this.consumer.on('processing_error', function (err) { return _this.processingErrorHandler(err); });
     }
     SqsWorker.prototype.registerTasksForProcessingAndStartConsuming = function (taskTypes) {
         var _this = this;
