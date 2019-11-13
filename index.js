@@ -13367,6 +13367,10 @@ var SqsWorker = /** @class */ (function () {
             var start, task;
             var _this = this;
             return __generator(this, function (_a) {
+                // do some work with `message`
+                if (this.config.debug) {
+                    console.log('ts-sqs-worker: ' + 'message: ' + JSON.stringify(message));
+                }
                 start = new Date().getTime();
                 _task_router__WEBPACK_IMPORTED_MODULE_3__["TaskRouter"].deserializeTask(message)
                     .then(function (t) {
@@ -13376,7 +13380,7 @@ var SqsWorker = /** @class */ (function () {
                     .then(function (result) {
                     if (result && result.error) {
                         if (_this.config.verbose) {
-                            console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
+                            console.log('ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
                         }
                         var type = 'unknown';
                         if (message.MessageAttributes && message.MessageAttributes.type) {
@@ -13389,7 +13393,7 @@ var SqsWorker = /** @class */ (function () {
                     }
                     else {
                         if (_this.config.verbose) {
-                            var msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
+                            var msg = 'ts-sqs-worker: ' + task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
                             if (result && result.message) {
                                 msg += ': ' + result.message;
                             }
@@ -13406,7 +13410,7 @@ var SqsWorker = /** @class */ (function () {
                 })
                     .catch(function (err) {
                     if (_this.config.verbose) {
-                        console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
+                        console.log('ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
                     }
                     var type = 'unknown';
                     if (message.MessageAttributes && message.MessageAttributes.type) {
@@ -13475,7 +13479,10 @@ var TaskRouter = /** @class */ (function () {
                 }
             }
         }
-        return Promise.reject(new Error("Couldn't match task type: " + JSON.stringify(message.MessageAttributes)));
+        return Promise.reject(new Error("Couldn't match task type: " +
+            JSON.stringify(message.MessageAttributes) +
+            '. Available types were: ' +
+            JSON.stringify(this.taskTypes.map(function (t) { return t.name; }))));
     };
     TaskRouter.taskTypes = [];
     return TaskRouter;
@@ -13511,7 +13518,14 @@ var Task = /** @class */ (function () {
         }
         else {
             if (config.verbose) {
-                console.log('Submitting task: ' + config.sqsUrl + ' region: ' + config.region + ', creds: ' + config.accessKeyId + ' / ...' + config.secretAccessKey.substring(config.secretAccessKey.length - 6));
+                console.log('Submitting task: ' +
+                    config.sqsUrl +
+                    ' region: ' +
+                    config.region +
+                    ', creds: ' +
+                    config.accessKeyId +
+                    ' / ...' +
+                    config.secretAccessKey.substring(config.secretAccessKey.length - 6));
             }
             return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__({
                 credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),

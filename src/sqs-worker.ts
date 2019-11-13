@@ -64,7 +64,7 @@ export class SqsWorker {
       // do some work with `message`
 
       if (this.config.debug) {
-        console.log('message: ' + JSON.stringify(message));
+        console.log('ts-sqs-worker: ' + 'message: ' + JSON.stringify(message));
       }
 
       const start = new Date().getTime();
@@ -80,7 +80,13 @@ export class SqsWorker {
           if (result && result.error) {
             if (this.config.verbose) {
               console.log(
-                'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error)
+                'ts-sqs-worker: ' +
+                  'Job ' +
+                  task.constructor.name +
+                  ' (' +
+                  message.MessageId +
+                  ') error: ' +
+                  JSON.stringify(result.error)
               );
             }
 
@@ -95,7 +101,14 @@ export class SqsWorker {
             return Promise.reject(result.error);
           } else {
             if (this.config.verbose) {
-              let msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
+              let msg =
+                'ts-sqs-worker: ' +
+                task.constructor.name +
+                '[' +
+                message.MessageId +
+                '] ' +
+                (new Date().getTime() - start) +
+                ' ms';
 
               if (result && result.message) {
                 msg += ': ' + result.message;
@@ -114,7 +127,10 @@ export class SqsWorker {
         })
         .catch(err => {
           if (this.config.verbose) {
-            console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
+            console.log(
+              'ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ',
+              err
+            );
           }
           let type = 'unknown';
           if (message.MessageAttributes && message.MessageAttributes.type) {

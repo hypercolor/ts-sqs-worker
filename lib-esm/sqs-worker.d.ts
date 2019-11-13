@@ -5,6 +5,7 @@ export interface ISqsWorkerConfig {
     secretAccessKey: string;
     region: string;
     verbose?: boolean;
+    debug?: boolean;
 }
 export interface ISqsWorkerTaskResult {
     durationMs: number;

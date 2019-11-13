@@ -30,6 +30,9 @@ export class SqsWorker {
     buildMessageHandler(successCallback, failCallback) {
         return async (message) => {
             // do some work with `message`
+            if (this.config.debug) {
+                console.log('ts-sqs-worker: ' + 'message: ' + JSON.stringify(message));
+            }
             const start = new Date().getTime();
             let task;
             TaskRouter.deserializeTask(message)
@@ -40,7 +43,7 @@ export class SqsWorker {
                 .then(result => {
                 if (result && result.error) {
                     if (this.config.verbose) {
-                        console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
+                        console.log('ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
                     }
                     let type = 'unknown';
                     if (message.MessageAttributes && message.MessageAttributes.type) {
@@ -53,7 +56,7 @@ export class SqsWorker {
                 }
                 else {
                     if (this.config.verbose) {
-                        let msg = task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
+                        let msg = 'ts-sqs-worker: ' + task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
                         if (result && result.message) {
                             msg += ': ' + result.message;
                         }
@@ -70,7 +73,7 @@ export class SqsWorker {
             })
                 .catch(err => {
                 if (this.config.verbose) {
-                    console.log('Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
+                    console.log('ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
                 }
                 let type = 'unknown';
                 if (message.MessageAttributes && message.MessageAttributes.type) {
