@@ -10,6 +10,7 @@ export interface ISqsWorkerConfig {
   secretAccessKey: string;
   region: string;
   verbose?: boolean;
+  debug?: boolean;
 }
 
 export interface ISqsWorkerTaskResult {
@@ -61,6 +62,10 @@ export class SqsWorker {
   ) {
     return async (message: SQS.Message) => {
       // do some work with `message`
+
+      if (this.config.debug) {
+        console.log('message: ' + JSON.stringify(message));
+      }
 
       const start = new Date().getTime();
 
