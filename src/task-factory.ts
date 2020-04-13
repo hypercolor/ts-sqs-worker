@@ -6,7 +6,7 @@ export class TaskFactory {
   private static taskTypes: { [key: string]: ITaskClass } = {};
 
   public static registerTask(taskType: ITaskClass) {
-    this.taskTypes[taskType.type] = taskType;
+    this.taskTypes[taskType.name] = taskType;
   }
 
   public static async build(type: string, parameters?: { [key: string]: any }): Promise<Task> {

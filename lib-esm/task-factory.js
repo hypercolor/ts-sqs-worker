@@ -1,7 +1,7 @@
-import { Mapper } from "./mapper";
+import { Mapper } from './mapper';
 export class TaskFactory {
     static registerTask(taskType) {
-        this.taskTypes[taskType.type] = taskType;
+        this.taskTypes[taskType.name] = taskType;
     }
     static async build(type, parameters) {
         if (type) {

@@ -4,7 +4,7 @@ export class Mapper {
         const serializer = new TypedJSON(clazz, {
             errorHandler: (err) => {
                 throw err;
-            }
+            },
         });
         try {
             return serializer.parse(json);

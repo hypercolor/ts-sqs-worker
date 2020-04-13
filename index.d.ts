@@ -39,7 +39,7 @@ export interface ISqsWorkerTaskResult {
 }
 
 export interface ITaskClass {
-    type: string;
+    name: string;
     workerConfig: ISqsWorkerConfig;
     new (): Task;
 }

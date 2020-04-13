@@ -1,7 +1,7 @@
-import { ISqsWorkerConfig } from "./i-sqs-worker-config";
-import { Task } from "./task";
+import { ISqsWorkerConfig } from './i-sqs-worker-config';
+import { Task } from './task';
 export interface ITaskClass {
-    type: string;
+    name: string;
     workerConfig: ISqsWorkerConfig;
     new (): Task;
 }

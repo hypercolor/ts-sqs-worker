@@ -17,7 +17,8 @@ export class Task {
                     config.accessKeyId +
                     ' / ...' +
                     config.secretAccessKey.substring(config.secretAccessKey.length - 6) +
-                    ' body: ' + body);
+                    ' body: ' +
+                    body);
             }
             return new SQS({
                 credentials: new Credentials(config.accessKeyId, config.secretAccessKey),

@@ -1,5 +1,5 @@
-import { ISqsWorkerConfig } from "./i-sqs-worker-config";
-import { ITaskClass } from "./i-task-class";
+import { ISqsWorkerConfig } from './i-sqs-worker-config';
+import { ITaskClass } from './i-task-class';
 export declare class SqsWorkerSubmitter {
     private config;
     constructor(config: ISqsWorkerConfig);

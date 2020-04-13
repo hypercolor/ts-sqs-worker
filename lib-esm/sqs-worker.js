@@ -1,7 +1,7 @@
 import { Credentials } from 'aws-sdk';
 import * as SQS from 'aws-sdk/clients/sqs';
 import * as Consumer from 'sqs-consumer';
-import { TaskFactory } from "./task-factory";
+import { TaskFactory } from './task-factory';
 export class SqsWorker {
     constructor(config, successCallback, failCallback) {
         this.config = config;

@@ -1,4 +1,4 @@
-import { ITaskClass } from "./i-task-class";
+import { ITaskClass } from './i-task-class';
 import { Task } from './task';
 export declare class TaskFactory {
     private static taskTypes;

@@ -13304,7 +13304,7 @@ var Mapper = /** @class */ (function () {
                 serializer = new typedjson__WEBPACK_IMPORTED_MODULE_0__["TypedJSON"](clazz, {
                     errorHandler: function (err) {
                         throw err;
-                    }
+                    },
                 });
                 try {
                     return [2 /*return*/, serializer.parse(json)];
@@ -13599,7 +13599,7 @@ var TaskFactory = /** @class */ (function () {
     function TaskFactory() {
     }
     TaskFactory.registerTask = function (taskType) {
-        this.taskTypes[taskType.type] = taskType;
+        this.taskTypes[taskType.name] = taskType;
     };
     TaskFactory.build = function (type, parameters) {
         return __awaiter(this, void 0, void 0, function () {
@@ -13659,7 +13659,8 @@ var Task = /** @class */ (function () {
                     config.accessKeyId +
                     ' / ...' +
                     config.secretAccessKey.substring(config.secretAccessKey.length - 6) +
-                    ' body: ' + body);
+                    ' body: ' +
+                    body);
             }
             return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__({
                 credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),
