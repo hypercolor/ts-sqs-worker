@@ -1,19 +1,12 @@
 import { Credentials } from 'aws-sdk';
 import * as SQS from 'aws-sdk/clients/sqs';
-import { ISqsWorkerConfig } from './sqs-worker';
-
-export interface ITaskClass {
-  name: string;
-  workerConfig: ISqsWorkerConfig;
-  deserialize(serializedParams: any): Promise<Task>;
-}
+import { ISqsWorkerConfig } from './i-sqs-worker-config';
+import { ITaskResult } from './i-task-result';
 
 export abstract class Task {
   static workerConfig: ISqsWorkerConfig;
 
-  public abstract serialize(): { [key: string]: any };
-
-  public abstract doTaskWork(): Promise<any>;
+  public abstract run(): Promise<ITaskResult | void>;
 
   public submit() {
     const config = (this.constructor as any).workerConfig;
@@ -24,6 +17,7 @@ export abstract class Task {
         )
       );
     } else {
+      const body = JSON.stringify(Object.assign({}, this, { type: this.constructor.name }));
       if (config.verbose) {
         console.log(
           'Submitting task: ' +
@@ -33,7 +27,9 @@ export abstract class Task {
             ', creds: ' +
             config.accessKeyId +
             ' / ...' +
-            config.secretAccessKey.substring(config.secretAccessKey.length - 6)
+            config.secretAccessKey.substring(config.secretAccessKey.length - 6) +
+            ' body: ' +
+            body
         );
       }
       return new SQS({
@@ -48,7 +44,7 @@ export abstract class Task {
               StringValue: this.constructor.name,
             },
           },
-          MessageBody: JSON.stringify(this.serialize()),
+          MessageBody: body,
           QueueUrl: config.sqsUrl,
         })
         .promise();

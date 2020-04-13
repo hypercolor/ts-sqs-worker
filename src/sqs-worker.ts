@@ -1,22 +1,11 @@
 import { Credentials } from 'aws-sdk';
 import * as SQS from 'aws-sdk/clients/sqs';
 import * as Consumer from 'sqs-consumer';
-import { ITaskClass, Task } from './task';
-import { TaskRouter } from './task-router';
-
-export interface ISqsWorkerConfig {
-  sqsUrl: string;
-  accessKeyId: string;
-  secretAccessKey: string;
-  region: string;
-  verbose?: boolean;
-  debug?: boolean;
-}
-
-export interface ISqsWorkerTaskResult {
-  durationMs: number;
-  taskResult: any;
-}
+import { ISqsWorkerConfig } from './i-sqs-worker-config';
+import { ISqsWorkerTaskResult } from './i-sqs-worker-task-result';
+import { ITaskClass } from './i-task-class';
+import { Task } from './task';
+import { TaskFactory } from './task-factory';
 
 export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: ISqsWorkerTaskResult) => void;
 export type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
@@ -48,7 +37,7 @@ export class SqsWorker {
 
   public registerTasksForProcessingAndStartConsuming(taskTypes: Array<ITaskClass>) {
     taskTypes.forEach(taskType => {
-      TaskRouter.registerTask(taskType);
+      TaskFactory.registerTask(taskType);
 
       taskType.workerConfig = this.config;
     });
@@ -69,78 +58,80 @@ export class SqsWorker {
 
       const start = new Date().getTime();
 
-      let task: Task;
+      const bodyString = message.Body;
+      if (!bodyString) {
+        throw new Error('Invalid message, no body: ' + JSON.stringify(message));
+      }
 
-      TaskRouter.deserializeTask(message)
-        .then(t => {
-          task = t;
-          return task.doTaskWork();
-        })
-        .then(result => {
-          if (result && result.error) {
-            if (this.config.verbose) {
-              console.log(
-                'ts-sqs-worker: ' +
-                  'Job ' +
-                  task.constructor.name +
-                  ' (' +
-                  message.MessageId +
-                  ') error: ' +
-                  JSON.stringify(result.error)
-              );
-            }
+      const body = JSON.parse(bodyString);
+      const messageType = body.type;
+      if (!messageType || typeof messageType !== 'string') {
+        throw new Error('Invalid message, message type not found or recognized: ' + JSON.stringify(body));
+      }
 
-            let type = 'unknown';
-            if (message.MessageAttributes && message.MessageAttributes.type) {
-              type = message.MessageAttributes.type.StringValue as string;
-            }
-            if (failCallback) {
-              failCallback(type, result.error);
-            }
+      try {
+        const task = await TaskFactory.build(messageType, body.parameters);
 
-            return Promise.reject(result.error);
-          } else {
-            if (this.config.verbose) {
-              let msg =
-                'ts-sqs-worker: ' +
-                task.constructor.name +
-                '[' +
-                message.MessageId +
-                '] ' +
-                (new Date().getTime() - start) +
-                ' ms';
+        const result = await task.run();
 
-              if (result && result.message) {
-                msg += ': ' + result.message;
-              }
-              console.log(msg);
-            }
-
-            if (successCallback) {
-              successCallback(task, {
-                durationMs: new Date().getTime() - start,
-                taskResult: result,
-              });
-            }
-            return Promise.resolve();
-          }
-        })
-        .catch(err => {
+        if (result && result.error) {
           if (this.config.verbose) {
             console.log(
-              'ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ',
-              err
+              'ts-sqs-worker: ' +
+                'Job ' +
+                task.constructor.name +
+                ' (' +
+                message.MessageId +
+                ') error: ' +
+                JSON.stringify(result.error)
             );
           }
+
           let type = 'unknown';
           if (message.MessageAttributes && message.MessageAttributes.type) {
             type = message.MessageAttributes.type.StringValue as string;
           }
           if (failCallback) {
-            failCallback(type, err);
+            failCallback(type, result.error);
           }
-          return Promise.resolve();
-        });
+
+          throw result.error;
+        } else {
+          if (this.config.verbose) {
+            let msg =
+              'ts-sqs-worker: ' +
+              task.constructor.name +
+              '[' +
+              message.MessageId +
+              '] ' +
+              (new Date().getTime() - start) +
+              ' ms';
+
+            if (result && result.info) {
+              msg += ': ' + result.info;
+            }
+            console.log(msg);
+          }
+
+          if (successCallback) {
+            successCallback(task, {
+              durationMs: new Date().getTime() - start,
+              taskResult: result,
+            });
+          }
+        }
+      } catch (err) {
+        if (this.config.verbose) {
+          console.log('ts-sqs-worker: ' + 'Job ' + messageType + ' (' + message.MessageId + ') error: ', err);
+        }
+        let type = 'unknown';
+        if (message.MessageAttributes && message.MessageAttributes.type) {
+          type = message.MessageAttributes.type.StringValue as string;
+        }
+        if (failCallback) {
+          failCallback(type, err);
+        }
+      }
     };
   }
 

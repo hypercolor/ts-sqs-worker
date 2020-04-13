@@ -13246,6 +13246,83 @@ exports.LRUCache = LRUCache;
 
 /***/ }),
 
+/***/ "./src/mapper.ts":
+/*!***********************!*\
+  !*** ./src/mapper.ts ***!
+  \***********************/
+/*! exports provided: Mapper */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Mapper", function() { return Mapper; });
+/* harmony import */ var typedjson__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! typedjson */ "typedjson");
+/* harmony import */ var typedjson__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(typedjson__WEBPACK_IMPORTED_MODULE_0__);
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
+var Mapper = /** @class */ (function () {
+    function Mapper() {
+    }
+    Mapper.map = function (json, clazz) {
+        return __awaiter(this, void 0, void 0, function () {
+            var serializer;
+            return __generator(this, function (_a) {
+                serializer = new typedjson__WEBPACK_IMPORTED_MODULE_0__["TypedJSON"](clazz, {
+                    errorHandler: function (err) {
+                        throw err;
+                    }
+                });
+                try {
+                    return [2 /*return*/, serializer.parse(json)];
+                }
+                catch (err) {
+                    throw { code: 422, error: 'Failed to parse parameters: ' + err.toLocaleString() };
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    return Mapper;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/sqs-worker-submitter.ts":
 /*!*************************************!*\
   !*** ./src/sqs-worker-submitter.ts ***!
@@ -13294,7 +13371,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var sqs_consumer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sqs-consumer */ "sqs-consumer");
 /* harmony import */ var sqs_consumer__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sqs_consumer__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _task_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./task-router */ "./src/task-router.ts");
+/* harmony import */ var _task_factory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./task-factory */ "./src/task-factory.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -13356,7 +13433,7 @@ var SqsWorker = /** @class */ (function () {
     SqsWorker.prototype.registerTasksForProcessingAndStartConsuming = function (taskTypes) {
         var _this = this;
         taskTypes.forEach(function (taskType) {
-            _task_router__WEBPACK_IMPORTED_MODULE_3__["TaskRouter"].registerTask(taskType);
+            _task_factory__WEBPACK_IMPORTED_MODULE_3__["TaskFactory"].registerTask(taskType);
             taskType.workerConfig = _this.config;
         });
         this.consumer.start();
@@ -13364,64 +13441,89 @@ var SqsWorker = /** @class */ (function () {
     SqsWorker.prototype.buildMessageHandler = function (successCallback, failCallback) {
         var _this = this;
         return function (message) { return __awaiter(_this, void 0, void 0, function () {
-            var start, task;
-            var _this = this;
+            var start, bodyString, body, messageType, task, result, type, msg, err_1, type;
             return __generator(this, function (_a) {
-                // do some work with `message`
-                if (this.config.debug) {
-                    console.log('ts-sqs-worker: ' + 'message: ' + JSON.stringify(message));
-                }
-                start = new Date().getTime();
-                _task_router__WEBPACK_IMPORTED_MODULE_3__["TaskRouter"].deserializeTask(message)
-                    .then(function (t) {
-                    task = t;
-                    return task.doTaskWork();
-                })
-                    .then(function (result) {
-                    if (result && result.error) {
-                        if (_this.config.verbose) {
-                            console.log('ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ' + JSON.stringify(result.error));
+                switch (_a.label) {
+                    case 0:
+                        // do some work with `message`
+                        if (this.config.debug) {
+                            console.log('ts-sqs-worker: ' + 'message: ' + JSON.stringify(message));
                         }
-                        var type = 'unknown';
+                        start = new Date().getTime();
+                        bodyString = message.Body;
+                        if (!bodyString) {
+                            throw new Error('Invalid message, no body: ' + JSON.stringify(message));
+                        }
+                        body = JSON.parse(bodyString);
+                        messageType = body.type;
+                        if (!messageType || typeof messageType !== 'string') {
+                            throw new Error('Invalid message, message type not found or recognized: ' + JSON.stringify(body));
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, _task_factory__WEBPACK_IMPORTED_MODULE_3__["TaskFactory"].build(messageType, body.parameters)];
+                    case 2:
+                        task = _a.sent();
+                        return [4 /*yield*/, task.run()];
+                    case 3:
+                        result = _a.sent();
+                        if (result && result.error) {
+                            if (this.config.verbose) {
+                                console.log('ts-sqs-worker: ' +
+                                    'Job ' +
+                                    task.constructor.name +
+                                    ' (' +
+                                    message.MessageId +
+                                    ') error: ' +
+                                    JSON.stringify(result.error));
+                            }
+                            type = 'unknown';
+                            if (message.MessageAttributes && message.MessageAttributes.type) {
+                                type = message.MessageAttributes.type.StringValue;
+                            }
+                            if (failCallback) {
+                                failCallback(type, result.error);
+                            }
+                            throw result.error;
+                        }
+                        else {
+                            if (this.config.verbose) {
+                                msg = 'ts-sqs-worker: ' +
+                                    task.constructor.name +
+                                    '[' +
+                                    message.MessageId +
+                                    '] ' +
+                                    (new Date().getTime() - start) +
+                                    ' ms';
+                                if (result && result.info) {
+                                    msg += ': ' + result.info;
+                                }
+                                console.log(msg);
+                            }
+                            if (successCallback) {
+                                successCallback(task, {
+                                    durationMs: new Date().getTime() - start,
+                                    taskResult: result,
+                                });
+                            }
+                        }
+                        return [3 /*break*/, 5];
+                    case 4:
+                        err_1 = _a.sent();
+                        if (this.config.verbose) {
+                            console.log('ts-sqs-worker: ' + 'Job ' + messageType + ' (' + message.MessageId + ') error: ', err_1);
+                        }
+                        type = 'unknown';
                         if (message.MessageAttributes && message.MessageAttributes.type) {
                             type = message.MessageAttributes.type.StringValue;
                         }
                         if (failCallback) {
-                            failCallback(type, result.error);
+                            failCallback(type, err_1);
                         }
-                        return Promise.reject(result.error);
-                    }
-                    else {
-                        if (_this.config.verbose) {
-                            var msg = 'ts-sqs-worker: ' + task.constructor.name + '[' + message.MessageId + '] ' + (new Date().getTime() - start) + ' ms';
-                            if (result && result.message) {
-                                msg += ': ' + result.message;
-                            }
-                            console.log(msg);
-                        }
-                        if (successCallback) {
-                            successCallback(task, {
-                                durationMs: new Date().getTime() - start,
-                                taskResult: result,
-                            });
-                        }
-                        return Promise.resolve();
-                    }
-                })
-                    .catch(function (err) {
-                    if (_this.config.verbose) {
-                        console.log('ts-sqs-worker: ' + 'Job ' + task.constructor.name + ' (' + message.MessageId + ') error: ', err);
-                    }
-                    var type = 'unknown';
-                    if (message.MessageAttributes && message.MessageAttributes.type) {
-                        type = message.MessageAttributes.type.StringValue;
-                    }
-                    if (failCallback) {
-                        failCallback(type, err);
-                    }
-                    return Promise.resolve();
-                });
-                return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
+                }
             });
         }); };
     };
@@ -13446,46 +13548,76 @@ var SqsWorker = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/task-router.ts":
-/*!****************************!*\
-  !*** ./src/task-router.ts ***!
-  \****************************/
-/*! exports provided: TaskRouter */
+/***/ "./src/task-factory.ts":
+/*!*****************************!*\
+  !*** ./src/task-factory.ts ***!
+  \*****************************/
+/*! exports provided: TaskFactory */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TaskRouter", function() { return TaskRouter; });
-var TaskRouter = /** @class */ (function () {
-    function TaskRouter() {
-    }
-    TaskRouter.registerTask = function (taskType) {
-        this.taskTypes.push(taskType);
-    };
-    TaskRouter.deserializeTask = function (message) {
-        var params;
-        try {
-            params = JSON.parse(message.Body);
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
-        if (message.MessageAttributes && message.MessageAttributes.type) {
-            var type = message.MessageAttributes.type.StringValue;
-            for (var _i = 0, _a = this.taskTypes; _i < _a.length; _i++) {
-                var taskType = _a[_i];
-                if (type === taskType.name) {
-                    return taskType.deserialize(params);
-                }
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TaskFactory", function() { return TaskFactory; });
+/* harmony import */ var _mapper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mapper */ "./src/mapper.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
             }
-        }
-        return Promise.reject(new Error("Couldn't match task type: " +
-            JSON.stringify(message.MessageAttributes) +
-            '. Available types were: ' +
-            JSON.stringify(this.taskTypes.map(function (t) { return t.name; }))));
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
+var TaskFactory = /** @class */ (function () {
+    function TaskFactory() {
+    }
+    TaskFactory.registerTask = function (taskType) {
+        this.taskTypes[taskType.type] = taskType;
     };
-    TaskRouter.taskTypes = [];
-    return TaskRouter;
+    TaskFactory.build = function (type, parameters) {
+        return __awaiter(this, void 0, void 0, function () {
+            var taskType;
+            return __generator(this, function (_a) {
+                if (type) {
+                    type = type.trim();
+                }
+                taskType = this.taskTypes[type];
+                if (!taskType) {
+                    throw new Error('Invalid task type: ' + type);
+                }
+                return [2 /*return*/, _mapper__WEBPACK_IMPORTED_MODULE_0__["Mapper"].map(parameters, taskType)];
+            });
+        });
+    };
+    TaskFactory.taskTypes = {};
+    return TaskFactory;
 }());
 
 
@@ -13517,6 +13649,7 @@ var Task = /** @class */ (function () {
             return Promise.reject(new Error('Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'));
         }
         else {
+            var body = JSON.stringify(Object.assign({}, this, { type: this.constructor.name }));
             if (config.verbose) {
                 console.log('Submitting task: ' +
                     config.sqsUrl +
@@ -13525,7 +13658,8 @@ var Task = /** @class */ (function () {
                     ', creds: ' +
                     config.accessKeyId +
                     ' / ...' +
-                    config.secretAccessKey.substring(config.secretAccessKey.length - 6));
+                    config.secretAccessKey.substring(config.secretAccessKey.length - 6) +
+                    ' body: ' + body);
             }
             return new aws_sdk_clients_sqs__WEBPACK_IMPORTED_MODULE_1__({
                 credentials: new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Credentials"](config.accessKeyId, config.secretAccessKey),
@@ -13539,7 +13673,7 @@ var Task = /** @class */ (function () {
                         StringValue: this.constructor.name,
                     },
                 },
-                MessageBody: JSON.stringify(this.serialize()),
+                MessageBody: body,
                 QueueUrl: config.sqsUrl,
             })
                 .promise();
@@ -13715,6 +13849,17 @@ module.exports = require("sqs-consumer");
 /***/ (function(module, exports) {
 
 module.exports = require("stream");
+
+/***/ }),
+
+/***/ "typedjson":
+/*!****************************!*\
+  !*** external "typedjson" ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("typedjson");
 
 /***/ }),
 

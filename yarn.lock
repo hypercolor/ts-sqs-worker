@@ -7815,6 +7815,11 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+typedjson@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/typedjson/-/typedjson-1.5.1.tgz#6e339ccdf33e424b1a4e75a3a3f43680edec67bb"
+  integrity sha512-0jVMTow6Z0O/ZkGK95U5a/QKnN4xkupxKDr2ljyReBAFpzIS3/sy9ltdqyuGIaaR60ezKHPf2AgybCbOJ1VhYw==
+
 typedoc-default-themes@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/typedoc-default-themes/-/typedoc-default-themes-0.5.0.tgz#6dc2433e78ed8bea8e887a3acde2f31785bd6227"

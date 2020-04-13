@@ -4,18 +4,6 @@
 
 import * as SQS from 'aws-sdk/clients/sqs';
 
-export interface ISqsWorkerConfig {
-    sqsUrl: string;
-    accessKeyId: string;
-    secretAccessKey: string;
-    region: string;
-    verbose?: boolean;
-    debug?: boolean;
-}
-export interface ISqsWorkerTaskResult {
-    durationMs: number;
-    taskResult: any;
-}
 export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: ISqsWorkerTaskResult) => void;
 export type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
 export class SqsWorker {
@@ -24,17 +12,9 @@ export class SqsWorker {
     registerTasksForProcessingAndStartConsuming(taskTypes: Array<ITaskClass>): void;
 }
 
-export interface ITaskClass {
-    name: string;
-    workerConfig: ISqsWorkerConfig;
-    deserialize(serializedParams: any): Promise<Task>;
-}
 export abstract class Task {
     static workerConfig: ISqsWorkerConfig;
-    abstract serialize(): {
-        [key: string]: any;
-    };
-    abstract doTaskWork(): Promise<any>;
+    abstract run(): Promise<ITaskResult | void>;
     submit(): Promise<import("aws-sdk/lib/request").PromiseResult<SQS.SendMessageResult, import("aws-sdk").AWSError>>;
 }
 
@@ -42,5 +22,30 @@ export class SqsWorkerSubmitter {
     constructor(config: ISqsWorkerConfig);
     registerTasksForSubmitting(taskTypes: Array<ITaskClass>): this;
     registerTaskForSubmitting(taskType: ITaskClass): this;
+}
+
+export interface ISqsWorkerConfig {
+    sqsUrl: string;
+    accessKeyId: string;
+    secretAccessKey: string;
+    region: string;
+    verbose?: boolean;
+    debug?: boolean;
+}
+
+export interface ISqsWorkerTaskResult {
+    durationMs: number;
+    taskResult: any;
+}
+
+export interface ITaskClass {
+    type: string;
+    workerConfig: ISqsWorkerConfig;
+    new (): Task;
+}
+
+export interface ITaskResult {
+    info?: string;
+    error?: any;
 }
 

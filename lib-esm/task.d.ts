@@ -1,15 +1,8 @@
 import * as SQS from 'aws-sdk/clients/sqs';
-import { ISqsWorkerConfig } from './sqs-worker';
-export interface ITaskClass {
-    name: string;
-    workerConfig: ISqsWorkerConfig;
-    deserialize(serializedParams: any): Promise<Task>;
-}
+import { ISqsWorkerConfig } from "./i-sqs-worker-config";
+import { ITaskResult } from "./i-task-result";
 export declare abstract class Task {
     static workerConfig: ISqsWorkerConfig;
-    abstract serialize(): {
-        [key: string]: any;
-    };
-    abstract doTaskWork(): Promise<any>;
+    abstract run(): Promise<ITaskResult | void>;
     submit(): Promise<import("aws-sdk/lib/request").PromiseResult<SQS.SendMessageResult, import("aws-sdk").AWSError>>;
 }

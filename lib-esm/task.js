@@ -7,6 +7,7 @@ export class Task {
             return Promise.reject(new Error('Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'));
         }
         else {
+            const body = JSON.stringify(Object.assign({}, this, { type: this.constructor.name }));
             if (config.verbose) {
                 console.log('Submitting task: ' +
                     config.sqsUrl +
@@ -15,7 +16,8 @@ export class Task {
                     ', creds: ' +
                     config.accessKeyId +
                     ' / ...' +
-                    config.secretAccessKey.substring(config.secretAccessKey.length - 6));
+                    config.secretAccessKey.substring(config.secretAccessKey.length - 6) +
+                    ' body: ' + body);
             }
             return new SQS({
                 credentials: new Credentials(config.accessKeyId, config.secretAccessKey),
@@ -29,7 +31,7 @@ export class Task {
                         StringValue: this.constructor.name,
                     },
                 },
-                MessageBody: JSON.stringify(this.serialize()),
+                MessageBody: body,
                 QueueUrl: config.sqsUrl,
             })
                 .promise();

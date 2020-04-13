@@ -1,16 +1,7 @@
-import { ITaskClass, Task } from './task';
-export interface ISqsWorkerConfig {
-    sqsUrl: string;
-    accessKeyId: string;
-    secretAccessKey: string;
-    region: string;
-    verbose?: boolean;
-    debug?: boolean;
-}
-export interface ISqsWorkerTaskResult {
-    durationMs: number;
-    taskResult: any;
-}
+import { ISqsWorkerConfig } from "./i-sqs-worker-config";
+import { ISqsWorkerTaskResult } from "./i-sqs-worker-task-result";
+import { ITaskClass } from "./i-task-class";
+import { Task } from './task';
 export declare type SqsWorkerSuccessfulTaskCallback = (task: Task, result: ISqsWorkerTaskResult) => void;
 export declare type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
 export declare class SqsWorker {
