@@ -13671,7 +13671,10 @@ var Task = /** @class */ (function () {
             return Promise.reject(new Error('Worker config not set for task ' + this.constructor.name + ', was it registered with a SqsWorkerSubmitter?'));
         }
         else {
-            var body = JSON.stringify(Object.assign({}, this, { type: this.constructor.name }));
+            var body = JSON.stringify({
+                type: this.constructor.name,
+                parameters: this,
+            });
             if (config.verbose) {
                 console.log('Submitting task: ' +
                     config.sqsUrl +
