@@ -72,7 +72,7 @@ export class SqsWorker {
       }
 
       try {
-        const task = await TaskFactory.build(messageType, body.parameters);
+        const task = await TaskFactory.build(messageType, body.parameters, this.config.debug);
 
         if (this.config.debug) {
           console.log('built task: ', task);

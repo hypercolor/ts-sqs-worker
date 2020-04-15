@@ -13465,7 +13465,7 @@ var SqsWorker = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 4, , 5]);
-                        return [4 /*yield*/, _task_factory__WEBPACK_IMPORTED_MODULE_3__["TaskFactory"].build(messageType, body.parameters)];
+                        return [4 /*yield*/, _task_factory__WEBPACK_IMPORTED_MODULE_3__["TaskFactory"].build(messageType, body.parameters, this.config.debug)];
                     case 2:
                         task = _a.sent();
                         if (this.config.debug) {

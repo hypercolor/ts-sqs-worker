@@ -47,7 +47,7 @@ export class SqsWorker {
                 throw new Error('Invalid message, message type not found or recognized: ' + JSON.stringify(body));
             }
             try {
-                const task = await TaskFactory.build(messageType, body.parameters);
+                const task = await TaskFactory.build(messageType, body.parameters, this.config.debug);
                 if (this.config.debug) {
                     console.log('built task: ', task);
                 }
