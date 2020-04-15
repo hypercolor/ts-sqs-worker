@@ -10,9 +10,7 @@ export class TaskFactory {
   }
 
   public static async build(type: string, parameters?: { [key: string]: any }): Promise<Task> {
-    if (type) {
-      type = type.trim();
-    }
+    type = type.trim();
     const taskType = this.taskTypes[type];
 
     if (!taskType) {

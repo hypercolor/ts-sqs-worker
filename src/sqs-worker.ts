@@ -37,9 +37,11 @@ export class SqsWorker {
 
   public registerTasksForProcessingAndStartConsuming(taskTypes: Array<ITaskClass>) {
     taskTypes.forEach(taskType => {
-      TaskFactory.registerTask(taskType);
-
+      if (this.config.verbose) {
+        console.log('ts-sqs-worker: registering task: ' + taskType.constructor.name);
+      }
       taskType.workerConfig = this.config;
+      TaskFactory.registerTask(taskType);
     });
 
     this.consumer.start();
@@ -71,6 +73,10 @@ export class SqsWorker {
 
       try {
         const task = await TaskFactory.build(messageType, body.parameters);
+
+        if (this.config.debug) {
+          console.log('built task: ', task);
+        }
 
         const result = await task.run();
 
