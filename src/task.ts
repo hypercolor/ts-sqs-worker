@@ -17,7 +17,10 @@ export abstract class Task {
         )
       );
     } else {
-      const body = JSON.stringify(Object.assign({}, this, { type: this.constructor.name }));
+      const body = JSON.stringify({
+        type: this.constructor.name,
+        parameters: this,
+      });
       if (config.verbose) {
         console.log(
           'Submitting task: ' +
