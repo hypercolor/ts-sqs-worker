@@ -13433,8 +13433,11 @@ var SqsWorker = /** @class */ (function () {
     SqsWorker.prototype.registerTasksForProcessingAndStartConsuming = function (taskTypes) {
         var _this = this;
         taskTypes.forEach(function (taskType) {
-            _task_factory__WEBPACK_IMPORTED_MODULE_3__["TaskFactory"].registerTask(taskType);
+            if (_this.config.verbose) {
+                console.log('ts-sqs-worker: registering task: ' + taskType.constructor.name);
+            }
             taskType.workerConfig = _this.config;
+            _task_factory__WEBPACK_IMPORTED_MODULE_3__["TaskFactory"].registerTask(taskType);
         });
         this.consumer.start();
     };
@@ -13465,6 +13468,9 @@ var SqsWorker = /** @class */ (function () {
                         return [4 /*yield*/, _task_factory__WEBPACK_IMPORTED_MODULE_3__["TaskFactory"].build(messageType, body.parameters)];
                     case 2:
                         task = _a.sent();
+                        if (this.config.debug) {
+                            console.log('built task: ', task);
+                        }
                         return [4 /*yield*/, task.run()];
                     case 3:
                         result = _a.sent();
@@ -13601,18 +13607,31 @@ var TaskFactory = /** @class */ (function () {
     TaskFactory.registerTask = function (taskType) {
         this.taskTypes[taskType.name] = taskType;
     };
-    TaskFactory.build = function (type, parameters) {
+    TaskFactory.build = function (type, parameters, verbose) {
         return __awaiter(this, void 0, void 0, function () {
-            var taskType;
+            var taskType, task;
             return __generator(this, function (_a) {
-                if (type) {
-                    type = type.trim();
+                switch (_a.label) {
+                    case 0:
+                        type = type.trim();
+                        if (verbose) {
+                            console.log('ts-sqs-worker.TaskFactory: Building task: ' + type);
+                        }
+                        taskType = this.taskTypes[type];
+                        if (!taskType) {
+                            throw new Error('Invalid task type: ' + type);
+                        }
+                        if (verbose) {
+                            console.log('ts-sqs-worker.TaskFactory: Got taskType: ', taskType);
+                        }
+                        return [4 /*yield*/, _mapper__WEBPACK_IMPORTED_MODULE_0__["Mapper"].map(parameters, taskType)];
+                    case 1:
+                        task = _a.sent();
+                        if (verbose) {
+                            console.log('ts-sqs-worker.TaskFactory: Built task: ', task);
+                        }
+                        return [2 /*return*/, task];
                 }
-                taskType = this.taskTypes[type];
-                if (!taskType) {
-                    throw new Error('Invalid task type: ' + type);
-                }
-                return [2 /*return*/, _mapper__WEBPACK_IMPORTED_MODULE_0__["Mapper"].map(parameters, taskType)];
             });
         });
     };

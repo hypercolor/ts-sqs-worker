@@ -5,5 +5,5 @@ export declare class TaskFactory {
     static registerTask(taskType: ITaskClass): void;
     static build(type: string, parameters?: {
         [key: string]: any;
-    }): Promise<Task>;
+    }, verbose?: boolean): Promise<Task>;
 }
