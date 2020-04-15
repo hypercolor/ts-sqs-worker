@@ -1,6 +1,6 @@
 {
   "name": "ts-sqs-worker",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "TypeScript worker stack using SQS",
   "main": "index.js",
   "types": "index.d.ts",
@@ -91,6 +91,7 @@
     }
   },
   "dependencies": {
+    "reflect-metadata": "^0.1.13",
     "sqs-consumer": "^4.1.0",
     "typedjson": "^1.5.1"
   },

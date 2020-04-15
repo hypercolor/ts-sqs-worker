@@ -105,14 +105,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _src_sqs_worker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/sqs-worker */ "./src/sqs-worker.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SqsWorker", function() { return _src_sqs_worker__WEBPACK_IMPORTED_MODULE_0__["SqsWorker"]; });
+/* harmony import */ var reflect_metadata__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! reflect-metadata */ "reflect-metadata");
+/* harmony import */ var reflect_metadata__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(reflect_metadata__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _src_sqs_worker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/sqs-worker */ "./src/sqs-worker.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SqsWorker", function() { return _src_sqs_worker__WEBPACK_IMPORTED_MODULE_1__["SqsWorker"]; });
 
-/* harmony import */ var _src_task__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/task */ "./src/task.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Task", function() { return _src_task__WEBPACK_IMPORTED_MODULE_1__["Task"]; });
+/* harmony import */ var _src_task__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/task */ "./src/task.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Task", function() { return _src_task__WEBPACK_IMPORTED_MODULE_2__["Task"]; });
 
-/* harmony import */ var _src_sqs_worker_submitter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/sqs-worker-submitter */ "./src/sqs-worker-submitter.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SqsWorkerSubmitter", function() { return _src_sqs_worker_submitter__WEBPACK_IMPORTED_MODULE_2__["SqsWorkerSubmitter"]; });
+/* harmony import */ var _src_sqs_worker_submitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./src/sqs-worker-submitter */ "./src/sqs-worker-submitter.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SqsWorkerSubmitter", function() { return _src_sqs_worker_submitter__WEBPACK_IMPORTED_MODULE_3__["SqsWorkerSubmitter"]; });
+
 
 
 
@@ -13847,6 +13850,17 @@ module.exports = require("path");
 /***/ (function(module, exports) {
 
 module.exports = require("querystring");
+
+/***/ }),
+
+/***/ "reflect-metadata":
+/*!***********************************!*\
+  !*** external "reflect-metadata" ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("reflect-metadata");
 
 /***/ }),
 

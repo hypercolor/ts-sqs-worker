@@ -4,6 +4,8 @@
 
 import * as SQS from 'aws-sdk/clients/sqs';
 
+import 'reflect-metadata';
+
 export type SqsWorkerSuccessfulTaskCallback = (task: Task, result: ISqsWorkerTaskResult) => void;
 export type SqsWorkerFailedTaskCallback = (taskName: string, error: any) => void;
 export class SqsWorker {
