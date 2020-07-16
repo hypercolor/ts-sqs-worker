@@ -13421,6 +13421,9 @@ var SqsWorker = /** @class */ (function () {
         if (!config || !config.sqsUrl || !config.accessKeyId || !config.secretAccessKey || !config.region) {
             throw new Error('Invalid SQS worker config: ' + JSON.stringify(config));
         }
+        if (config.batchSize && (config.batchSize < 1 || config.batchSize > 10)) {
+            throw new Error('Invalid batchSize, must be 1-10');
+        }
         this.consumer = sqs_consumer__WEBPACK_IMPORTED_MODULE_2__["create"]({
             queueUrl: config.sqsUrl,
             handleMessage: this.buildMessageHandler(successCallback, failCallback),
@@ -13429,6 +13432,7 @@ var SqsWorker = /** @class */ (function () {
                 region: config.region,
             }),
             messageAttributeNames: ['type'],
+            batchSize: config.batchSize
         });
         this.consumer.on('error', function (err) { return _this.errorHandler(err); });
         this.consumer.on('processing_error', function (err) { return _this.processingErrorHandler(err); });

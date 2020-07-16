@@ -21,6 +21,9 @@ export class SqsWorker {
     if (!config || !config.sqsUrl || !config.accessKeyId || !config.secretAccessKey || !config.region) {
       throw new Error('Invalid SQS worker config: ' + JSON.stringify(config));
     }
+    if (config.batchSize && (config.batchSize < 1 || config.batchSize > 10)) {
+      throw new Error('Invalid batchSize, must be 1-10');
+    }
     this.consumer = Consumer.create({
       queueUrl: config.sqsUrl,
       handleMessage: this.buildMessageHandler(successCallback, failCallback),
@@ -29,6 +32,7 @@ export class SqsWorker {
         region: config.region,
       }),
       messageAttributeNames: ['type'],
+      batchSize: config.batchSize,
     });
 
     this.consumer.on('error', err => this.errorHandler(err));
